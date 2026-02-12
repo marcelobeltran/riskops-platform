@@ -1,0 +1,79 @@
+{% extends "admin/base_site.html" %}
+{% load core_utils %}
+
+{% block title %}Matriz de Riesgo | RiesgoOps{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>Matriz de Calor de Riesgos</h1>
+
+    <div style="margin-bottom: 20px;">
+        <a href="?mode=inherent" class="button {% if mode == 'inherent' %}default{% endif %}">Ver Inherente</a>
+        <a href="?mode=residual" class="button {% if mode == 'residual' %}default{% endif %}">Ver Residual</a>
+        <a href="/admin/" class="button" style="float: right;">Volver al Admin</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 50px repeat(5, 1fr); gap: 5px; margin-top: 20px;">
+        <!-- Header Row -->
+        <div></div>
+        <div style="text-align:center; font-weight:bold;">Raro (1)</div>
+        <div style="text-align:center; font-weight:bold;">Improbable (2)</div>
+        <div style="text-align:center; font-weight:bold;">Posible (3)</div>
+        <div style="text-align:center; font-weight:bold;">Probable (4)</div>
+        <div style="text-align:center; font-weight:bold;">Casi Seguro (5)</div>
+
+        <!-- Matrix Rows -->
+        {% for row in rows %}
+        <div style="display:flex; align-items:center; justify-content:center; font-weight:bold; height: 100px;">
+            Imp {{ row }}
+        </div>
+        {% for col in cols %}
+        {% with cell_risks=matrix|dict_lookup:row|dict_lookup:col %}
+        <div style="
+                    border: 1px solid #ccc; 
+                    height: 100px; 
+                    padding: 5px; 
+                    overflow-y: auto;
+                    background-color: 
+                        {% if row|multiply:col >= 15 %}#ffcccc
+                        {% elif row|multiply:col >= 10 %}#ffeeba
+                        {% elif row|multiply:col >= 5 %}#d4edda
+                        {% else %}#e2e3e5{% endif %};
+                ">
+            {% if cell_risks %}
+            <div style="font-weight:bold; margin-bottom:5px;">{{ cell_risks|length }} Riesgos</div>
+            <ul style="padding-left: 15px; margin: 0; font-size: 0.8em;">
+                {% for r in cell_risks %}
+                <li><a href="/admin/risk_universe/risk/{{ r.id }}/change/">{{ r.title }}</a></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <span style="color: #999;">-</span>
+            {% endif %}
+        </div>
+        {% endwith %}
+        {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+<style>
+    .button {
+        background: #eee;
+        border: 1px solid #ccc;
+        padding: 5px 10px;
+        color: #333;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-right: 5px;
+    }
+
+    .button.default {
+        background: #79aec8;
+        color: white;
+        border-color: #79aec8;
+    }
+</style>
+{% endblock %}
