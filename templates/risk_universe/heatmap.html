@@ -1,0 +1,266 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static dashboard_tags %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .matrix-container {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        padding: 24px;
+        background: #f8fafc;
+        min-height: 100vh;
+    }
+
+    .matrix-header {
+        margin-bottom: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .matrix-header h1 {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .matrix-grid-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 32px;
+        margin-bottom: 32px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .risk-matrix {
+        display: grid;
+        grid-template-columns: 80px repeat(5, 1fr);
+        gap: 8px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .matrix-cell {
+        aspect-ratio: 1;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-align: center;
+        padding: 8px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .matrix-cell:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+
+    .cell-label {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        margin-bottom: 4px;
+    }
+
+    .risk-count {
+        font-size: 1.25rem;
+        font-weight: 800;
+    }
+
+    .axis-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #64748b;
+        font-size: 0.875rem;
+    }
+
+    .vertical-axis {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+
+    /* Risk Colors */
+    .bg-bajo {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .bg-medio-bajo {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .bg-medio {
+        background-color: #fde68a;
+        color: #92400e;
+    }
+
+    .bg-medio-alto {
+        background-color: #fbbf24;
+        color: #78350f;
+    }
+
+    .bg-alto {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .bg-critico {
+        background-color: #7f1d1d;
+        color: white;
+    }
+
+    .matrix-legend {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    .legend-box {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+
+    .gest-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .gest-table th {
+        background: #f8fafc;
+        padding: 16px 24px;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #64748b;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .gest-table td {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.875rem;
+        color: #334155;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="matrix-container">
+    <div class="matrix-header">
+        <h1>🛡️ Matriz de Riesgos Inherentes</h1>
+        <div class="actions">
+            <button onclick="window.print()" class="button"
+                style="background:#fff; color:#334155; border:1px solid #e2e8f0; padding:8px 16px; border-radius:8px; font-weight:600; cursor:pointer;">
+                🖨️ Exportar PDF
+            </button>
+        </div>
+    </div>
+
+    <div class="matrix-grid-card">
+        <div class="risk-matrix">
+            <!-- Empty corner -->
+            <div></div>
+            <div class="axis-label">I1</div>
+            <div class="axis-label">I2</div>
+            <div class="axis-label">I3</div>
+            <div class="axis-label">I4</div>
+            <div class="axis-label">I5</div>
+
+            {% for prob in probability_range %}
+            <div class="axis-label vertical-axis">P{{ prob }}</div>
+            {% for impact in impact_range %}
+            {% with cell=matrix|get_item:prob|get_item:impact %}
+            <div class="matrix-cell bg-{{ cell.level|slugify }}" title="{{ cell.level }}">
+                <span class="risk-count">{{ cell.count }}</span>
+            </div>
+            {% endwith %}
+            {% endfor %}
+            {% endfor %}
+        </div>
+
+        <div class="matrix-legend">
+            <div class="legend-item">
+                <div class="legend-box bg-bajo"></div> Bajo
+            </div>
+            <div class="legend-item">
+                <div class="legend-box bg-medio-bajo"></div> Medio Bajo
+            </div>
+            <div class="legend-item">
+                <div class="legend-box bg-medio"></div> Medio
+            </div>
+            <div class="legend-item">
+                <div class="legend-box bg-medio-alto"></div> Medio Alto
+            </div>
+            <div class="legend-item">
+                <div class="legend-box bg-alto"></div> Alto
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 16px; color: #94a3b8; font-size: 0.875rem;">
+            * Los ejes representan niveles de Probabilidad (P) e Impacto (I) según metodología.
+        </p>
+    </div>
+
+    <div class="table-card">
+        <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0;">
+            <h3 style="margin:0; font-size: 1.125rem; color: #1e293b;">Detalle de Riesgos</h3>
+        </div>
+        <table class="gest-table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Riesgo</th>
+                    <th>Probabilidad</th>
+                    <th>Impacto Máx</th>
+                    <th>Nivel Inherente</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for risk in risks %}
+                <tr>
+                    <td style="font-family: monospace; font-weight: 600;">{{ risk.code }}</td>
+                    <td>{{ risk.title }}</td>
+                    <td>{{ risk.inherent_probability.name }}</td>
+                    <td>{{ risk.inherent_impact_level }}</td>
+                    <td>
+                        <span class="badge badge-{{ risk.inherent_display|slugify|lower }}"
+                            style="padding: 4px 12px; border-radius: 9999px; font-weight: 700; font-size: 0.75rem;">
+                            {{ risk.inherent_display }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | GestOperIA{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}"
+        style="display: flex; align-items: center; gap: 12px; color: white; text-decoration: none;">
+        <span style="font-size: 20px; font-weight: 700; letter-spacing: -0.5px;">GestOperIA</span>
+        <div style="width: 1px; height: 16px; background: rgba(255,255,255,0.3);"></div>
+        <span
+            style="font-size: 12px; font-weight: 500; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px;">Risk
+            Analytics & Management</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

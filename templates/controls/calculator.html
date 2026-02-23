@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Efectividad - GestOperIA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #0f172a;
+            --card: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --accent: #38bdf8;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.15) 0px, transparent 50%);
+        }
+
+        .container {
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #94a3b8;
+        }
+
+        select {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            color: #fff;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        .result-card {
+            margin-top: 30px;
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .pct {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .entorno {
+            font-size: 14px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--accent);
+        }
+
+        .details {
+            font-size: 12px;
+            color: #94a3b8;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: scale(1.02);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Calculadora de Efectividad</h1>
+
+        <div class="form-group">
+            <label>Oportunidad</label>
+            <select id="oportunidad">
+                <option value="PREVENTIVO">PREVENTIVO (35%)</option>
+                <option value="DETECTIVO">DETECTIVO (20%)</option>
+                <option value="SIN CONTROL">SIN CONTROL (0%)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Alcance</label>
+            <select id="alcance">
+                <option value="TOTAL DE TRANSACCIONES/OPERACIONES">TOTAL (20%)</option>
+                <option value="PARCIAL (MUESTRAL)">PARCIAL (5%)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Segregación</label>
+            <select id="segregacion">
+                <option value="SI">SI (15%)</option>
+                <option value="NO">NO (0%)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Tipo de Control</label>
+            <select id="tipo">
+                <option value="AUTOMATICO">AUTOMATICO (20%)</option>
+                <option value="SEMIAUTOMATICO">SEMIAUTOMATICO (15%)</option>
+                <option value="MANUAL">MANUAL (5%)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Formalización</label>
+            <select id="formalizacion">
+                <option value="FORMALIZADO">FORMALIZADO (10%)</option>
+                <option value="NO FORMALIZADO">NO FORMALIZADO (5%)</option>
+            </select>
+        </div>
+
+        <button onclick="calculate()">Calcular Efectividad</button>
+
+        <div id="result" class="result-card">
+            <div class="result-header">
+                <div id="pct" class="pct">0%</div>
+                <div id="entorno" class="entorno">-</div>
+            </div>
+            <div class="details" id="details">
+                <!-- Details injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function calculate() {
+            const data = {
+                oportunidad_control: document.getElementById('oportunidad').value,
+                alcance_control: document.getElementById('alcance').value,
+                hay_segregacion_funciones: document.getElementById('segregacion').value,
+                tipo_control: document.getElementById('tipo').value,
+                formalizacion_control: document.getElementById('formalizacion').value
+            };
+
+            try {
+                const response = await fetch('/api/controles/calcular', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('pct').innerText = result.efectividad_control_pct;
+                document.getElementById('entorno').innerText = result.entorno_control;
+
+                let detailHtml = '';
+                const labels = {
+                    puntaje_oportunidad_control: 'Oportunidad',
+                    puntaje_alcance_control: 'Alcance',
+                    puntaje_hay_segregacion_funciones: 'Segregación',
+                    puntaje_tipo_control: 'Tipo',
+                    puntaje_formalizacion_control: 'Formalización'
+                };
+
+                for (const [key, val] of Object.entries(result.detalle)) {
+                    if (key === 'suma') continue;
+                    detailHtml += `<div class="detail-row"><span>${labels[key]}</span><span>${(val * 100).toFixed(0)}%</span></div>`;
+                }
+                document.getElementById('details').innerHTML = detailHtml;
+
+            } catch (e) {
+                alert('Error al calcular: ' + e);
+            }
+        }
+    </script>
+</body>
+
+</html>

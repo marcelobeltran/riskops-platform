@@ -1,59 +1,282 @@
-<div class="dashboard-stats"
-    style="padding: 20px; background: #f8f9fa; margin-bottom: 20px; border-radius: 5px; border: 1px solid #e0e0e0;">
-    <h2>RiskOps Dashboard</h2>
+{% load dashboard_tags %}
+<div class="gestoperia-dashboard" style="font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    <div
-        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-        <div class="stat-box"
-            style="background: white; padding: 15px; border-radius: 4px; border-left: 5px solid #007bff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        .gestoperia-dashboard {
+            font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+            color: #323130;
+            padding: 10px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #FFFFFF;
+            padding: 16px;
+            border-radius: 2px;
+            box-shadow: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132), 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #EDEBE9;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .stat-card:hover {
+            border-color: #D2D0CE;
+            box-shadow: 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.132), 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.108);
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 11px;
+            color: #605E5C;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 8px;
+            color: #323130;
+            line-height: 1.2;
+        }
+
+        .stat-indicator {
+            height: 3px;
+            width: 24px;
+            border-radius: 0;
+            margin-top: 8px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 2px;
+            box-shadow: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132), 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
+            border: 1px solid #EDEBE9;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-header {
+            padding: 12px 16px;
+            background: #FFFFFF;
+            border-bottom: 1px solid #EDEBE9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #323130;
+        }
+
+        .gest-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .gest-table th {
+            text-align: left;
+            padding: 8px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #605E5C;
+            background: #FAF9F8;
+            font-weight: 600;
+            border-bottom: 1px solid #EDEBE9;
+        }
+
+        .gest-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #F3F2F1;
+            font-size: 13px;
+            color: #323130;
+        }
+
+        .gest-table tr:hover td {
+            background: #FAF9F8;
+        }
+
+        .badge {
+            padding: 2px 8px;
+            border-radius: 2px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .badge-alto {
+            background: #FDE7E9;
+            color: #A4262C;
+            border-color: #F8D2D4;
+        }
+
+        .badge-medio {
+            background: #FFF4CE;
+            color: #9A3412;
+            border-color: #FFEDD5;
+        }
+
+        .badge-bajo {
+            background: #DFF6DD;
+            color: #107C10;
+            border-color: #CEF0CD;
+        }
+
+        .badge-critico {
+            background: #A4262C;
+            color: white;
+        }
+    </style>
+
+    <div class="dashboard-grid">
+        <div class="stat-card">
             <h3>Procesos Críticos</h3>
-            <p style="font-size: 2em; margin: 0; font-weight: bold;">{{ critical_processes }}</p>
+            <div class="stat-value">{{ critical_processes }}</div>
+            <div class="stat-indicator" style="background: #0078D4;"></div>
         </div>
-        <div class="stat-box"
-            style="background: white; padding: 15px; border-radius: 4px; border-left: 5px solid #dc3545; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div class="stat-card">
             <h3>Planes Vencidos</h3>
-            <p style="font-size: 2em; margin: 0; font-weight: bold;">{{ plans_overdue }}</p>
+            <div class="stat-value" style="color: #A4262C;">{{ plans_overdue }}</div>
+            <div class="stat-indicator" style="background: #A4262C;"></div>
         </div>
-        <div class="stat-box"
-            style="background: white; padding: 15px; border-radius: 4px; border-left: 5px solid #ffc107; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <h3>KRIs en Alerta (Amber/Red)</h3>
-            <p style="font-size: 2em; margin: 0; font-weight: bold;">{{ kris_red|add:kris_amber }}</p>
+        <div class="stat-card">
+            <h3>KRIs en Alerta</h3>
+            <div class="stat-value" style="color: #9A3412;">{{ kris_red|add:kris_amber }}</div>
+            <div class="stat-indicator" style="background: #9A3412;"></div>
         </div>
-        <div class="stat-box"
-            style="background: white; padding: 15px; border-radius: 4px; border-left: 5px solid #17a2b8; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <h3><a href="/risk-matrix/" style="text-decoration:none; color:inherit;">Ver Matriz de Calor &rarr;</a></h3>
+        <div class="stat-card" onclick="window.location='{% url 'risk_heatmap' %}'"
+            style="cursor:pointer; background: #005A9E; color: white;">
+            <h3 style="color: #DEECF9;">Sistemas IA</h3>
+            <div class="stat-value" style="color: white; font-size: 18px;">GestOperIA Activo</div>
+            <div style="margin-top: 8px; font-size: 11px; color: #DEECF9; font-weight: 600;">VER MATRIZ &rarr;</div>
         </div>
     </div>
 
-    <div style="display: flex; gap: 20px;">
-        <div
-            style="flex: 1; background: white; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 4px;">
-            <h3>Top 10 Riesgos (Nivel Residual)</h3>
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead style="border-bottom: 2px solid #eee;">
+    <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
+        <div class="table-card">
+            <div class="table-header">
+                <h3>Top 10 Riesgos (Nivel Residual)</h3>
+            </div>
+            <table class="gest-table">
+                <thead>
                     <tr>
-                        <th style="text-align: left; padding: 8px;">Riesgo</th>
-                        <th style="text-align: left; padding: 8px;">Proceso</th>
-                        <th style="padding: 8px;">Nivel</th>
+                        <th>Riesgo</th>
+                        <th>Proceso</th>
+                        <th>Nivel</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for risk in top_risks %}
-                    <tr style="border-bottom: 1px solid #f0f0f0;">
-                        <td style="padding: 8px;">
-                            <a href="/admin/risk_universe/risk/{{ risk.id }}/change/">{{ risk.title }}</a>
+                    <tr>
+                        <td>
+                            <a href="/admin/risk_universe/risk/{{ risk.id }}/change/"
+                                style="color: #2563eb; text-decoration: none; font-weight: 500;">{{ risk.title }}</a>
                         </td>
-                        <td style="padding: 8px;">{{ risk.process.name }}</td>
-                        <td style="padding: 8px; text-align: center; font-weight: bold;">{{ risk.residual_display }}
+                        <td>{{ risk.process.name }}</td>
+                        <td>
+                            <span class="badge badge-{{ risk.residual_display|slugify|lower }}">
+                                {{ risk.residual_display }}
+                            </span>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" style="padding: 10px; text-align: center;">No hay riesgos registrados.</td>
+                        <td colspan="3" style="text-align: center; color: #94a3b8; padding: 32px;">No hay riesgos
+                            registrados.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        <div class="table-card" style="padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin:0; font-size: 14px; font-weight: 600;">Distribución de Riesgos</h3>
+                <div style="font-size: 10px; color: #605E5C;">v2.1 (Ciclo de Vida)</div>
+                <a href="{% url 'risk_heatmap' %}"
+                    style="font-size: 12px; color: #0078D4; text-decoration: none; font-weight: 600;">VER DETALLE
+                    &rarr;</a>
+            </div>
+
+            <div style="display: flex; gap: 20px; align-items: start;">
+                <div style="flex: 1;">
+                    <canvas id="riskDistChart" style="max-height: 200px;"></canvas>
+                </div>
+
+                <!-- Mini Heatmap Grid -->
+                <div style="flex: 1;">
+                    <div
+                        style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 200px; margin: 0 auto;">
+                        {% for p in rows %}
+                        {% for i in cols %}
+                        {% with cell=mini_matrix|get_item:p|get_item:i %}
+                        <div style="aspect-ratio: 1; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700;"
+                            class="badge-{{ cell.level|slugify|lower }}"
+                            title="P:{{p}} I:{{i}} - {{cell.count}} riesgos">
+                            {{ cell.count|default:"0" }}
+                        </div>
+                        {% endwith %}
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                    <div
+                        style="margin-top: 8px; text-align: center; font-size: 0.75rem; color: #64748b; font-weight: 600;">
+                        Matriz de Riesgos Inherentes (5x5)
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('riskDistChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Bajo', 'Medio Bajo', 'Medio', 'Medio Alto', 'Alto'],
+                datasets: [{
+                    data: [
+                        Number("{{ risk_counts.Bajo|default:0 }}"),
+                        Number("{{ risk_counts.Medio_Bajo|default:0 }}"),
+                        Number("{{ risk_counts.Medio|default:0 }}"),
+                        Number("{{ risk_counts.Medio_Alto|default:0 }}"),
+                        Number("{{ risk_counts.Alto|default:0 }}")
+                    ],
+                    backgroundColor: ['#DFF6DD', '#FFF4CE', '#FFEB3B', '#FF9800', '#FDE7E9'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            font: { size: 10 }
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    });
+</script>
